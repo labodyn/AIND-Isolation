@@ -36,7 +36,7 @@ def custom_score(game, player):
     """
     # FIXME: Very dumb heuristic
     legal_moves = game.get_legal_moves(player)
-    return legal_moves
+    return len(legal_moves)
 
 
 def custom_score_2(game, player):
@@ -210,11 +210,33 @@ class MinimaxPlayer(IsolationPlayer):
                 each helper function or else your agent will timeout during
                 testing.
         """
+        return self.minimax_search(game, depth)[0]
+
+    def minimax_search(self, game, depth):
+        """Perform recursive search."""
         if self.time_left() < self.TIMER_THRESHOLD:
             raise SearchTimeout()
 
-        # TODO: finish this function!
-        raise NotImplementedError
+        legal_moves = game.get_legal_moves()
+        no_move = (-1, -1)
+
+        # Return score at end of game.
+        if not legal_moves:
+            return no_move, game.utility(self)
+
+        # Return heuristic when search depth is reached.
+        if not depth:
+            return no_move, self.score(game, self)
+
+        # Search for best move.
+        best_move = None
+        sign = 1 if game.active_player == game.get_opponent(self) else -1
+        best_score = sign * float("inf")
+        for move in legal_moves:
+            _, score = self.minimax_search(game.forecast_move(move), depth - 1)
+            if sign * score < sign * best_score:
+                best_move, best_score = move, score
+        return best_move, best_score
 
 
 class AlphaBetaPlayer(IsolationPlayer):

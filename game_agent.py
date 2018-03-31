@@ -372,4 +372,3 @@ class AlphaBetaPlayer(IsolationPlayer):
                     if beta <= alpha:
                         break
         return best_move, best_score
-

@@ -2,12 +2,17 @@
 test your agent's strength against a set of known agents using tournament.py
 and include the results in your report.
 """
-import random
 
 
 class SearchTimeout(Exception):
     """Subclass base exception for code clarity. """
     pass
+
+
+def get_distance_to_centre(game, player):
+    w, h = game.width / 2., game.height / 2.
+    y, x = game.get_player_location(player)
+    return float((h - y)**2 + (w - x)**2)
 
 
 def custom_score(game, player):
@@ -34,9 +39,10 @@ def custom_score(game, player):
     float
         The heuristic value of the current game state to the specified player.
     """
-    # FIXME: Very dumb heuristic
-    legal_moves = game.get_legal_moves(player)
-    return float(len(legal_moves))
+    return (game.utility(player)
+            + len(game.get_legal_moves(player))
+            - len(game.get_legal_moves(game.get_opponent(player)))
+            - 0.5 * get_distance_to_centre(game, player))
 
 
 def custom_score_2(game, player):
@@ -61,8 +67,8 @@ def custom_score_2(game, player):
     float
         The heuristic value of the current game state to the specified player.
     """
-    # TODO: finish this function!
-    raise NotImplementedError
+    legal_moves = game.get_legal_moves(player)
+    return float(len(legal_moves))
 
 
 def custom_score_3(game, player):
@@ -87,8 +93,8 @@ def custom_score_3(game, player):
     float
         The heuristic value of the current game state to the specified player.
     """
-    # TODO: finish this function!
-    raise NotImplementedError
+    return (game.utility(player) + len(game.get_legal_moves(player)) -
+            len(game.get_legal_moves(game.get_opponent(player))))
 
 
 class IsolationPlayer:
